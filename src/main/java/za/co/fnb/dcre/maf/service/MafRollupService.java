@@ -18,6 +18,17 @@ public class MafRollupService {
     public static final String SCORE_COMPLETE = "SCORE_COMPLETE";
     public static final String SCORE_CARRIED = "SCORE_CARRIED";
 
+    /**
+     * Canonical AGT seam Outcome names (per-module convention, mirrors
+     * ManRollupService). The stage->AGT seam file must carry an
+     * {@code za.co.fnb.dcre.agt.domain.Outcome} name; every other stage writes
+     * one. The SCORE_* tokens above are MAF's DOMAIN rollup, not seam vocabulary:
+     * writing them raw reads as present-but-invalid and AGT classes the stage
+     * TECH_FAILED (arbiter clause, R-33) even on a clean exit-0 completion.
+     */
+    public static final String BUSINESS_ACCEPTED = "BUSINESS_ACCEPTED";
+    public static final String BUSINESS_PARTIAL = "BUSINESS_PARTIAL";
+
     private final ManRequestEntryRepo entries;
 
     public MafRollupService(final ManRequestEntryRepo entries) {
@@ -28,5 +39,20 @@ public class MafRollupService {
         final int pending = entries.countByArrivalIdAndActionCodeAndSpineState(
                 arrivalId, ManAffordabilityService.CREATE, "SCORE_PENDING");
         return pending > 0 ? SCORE_CARRIED : SCORE_COMPLETE;
+    }
+
+    /**
+     * Translate the domain rollup verdict to the canonical seam Outcome AGT reads.
+     * MAF never fails on carry-over: a full settle is BUSINESS_ACCEPTED, a
+     * carry-over advances the DAG as BUSINESS_PARTIAL (the spine holds the per-row
+     * SCORE_PENDING truth). Fail closed on an unmapped verdict rather than emit a
+     * token AGT cannot parse.
+     */
+    public static String seamOutcome(final String rollupVerdict) {
+        return switch (rollupVerdict) {
+            case SCORE_COMPLETE -> BUSINESS_ACCEPTED;
+            case SCORE_CARRIED -> BUSINESS_PARTIAL;
+            default -> throw new IllegalStateException("unmapped MAF rollup verdict: " + rollupVerdict);
+        };
     }
 }

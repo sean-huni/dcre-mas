@@ -161,6 +161,12 @@ class MafJobIT {
         assertEquals("PASS", enquiryOutcome(arrival, 1));
         assertEquals(638, enquiryScore(arrival, 1));
         assertTrue(completed(arrival, 1), "a settled enquiry stamps completed_at");
+        // T16 seam regression: the outcome FILE must carry a canonical AGT Outcome
+        // name (BUSINESS_ACCEPTED), not the raw SCORE_COMPLETE domain token, or AGT
+        // reads it as present-but-invalid and classes the stage TECH_FAILED.
+        final Path seam = EXCHANGE.resolve("outcomes").resolve("local-maf-" + run.getId());
+        assertEquals("BUSINESS_ACCEPTED", Files.readString(seam).strip(),
+                "seam file speaks canonical Outcome vocabulary, not SCORE_COMPLETE");
     }
 
     @Test

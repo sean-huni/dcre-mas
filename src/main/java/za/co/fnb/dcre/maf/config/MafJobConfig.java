@@ -79,10 +79,15 @@ public class MafJobConfig {
 
     /**
      * Seam verdict (supplied to the shared OutcomeSeamListener, SCRUM-58): the
-     * rollup's carry-over status. MAF has no whole-file FATAL of its own; an
-     * unavailable-bureau carry-over is a normal SCORE_CARRIED, not a failure.
+     * rollup's carry-over status, mapped to the canonical AGT Outcome vocabulary.
+     * MAF has no whole-file FATAL of its own; an unavailable-bureau carry-over is
+     * a normal SCORE_CARRIED (-> BUSINESS_PARTIAL), not a failure. The FlowJob end
+     * states and step exit status stay the SCORE_* domain tokens (resume + IT
+     * assertions); only the seam file speaks canonical Outcome names.
      */
     private static String seamVerdict(final JobExecution execution) {
-        return execution.getExecutionContext().getString("seamVerdict", MafRollupService.SCORE_COMPLETE);
+        final String rollup = execution.getExecutionContext()
+                .getString("seamVerdict", MafRollupService.SCORE_COMPLETE);
+        return MafRollupService.seamOutcome(rollup);
     }
 }
