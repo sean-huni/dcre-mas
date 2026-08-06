@@ -18,7 +18,7 @@ import java.util.UUID;
  *   <li>idempotent + resumable: a re-run touches zero rows already advanced,</li>
  *   <li>non-clobbering: SCORE_PENDING -> terminal only fires from SCORE_PENDING,
  *       and VALIDATED -> SCORE_PENDING is CREATE-scoped, so an AMEND/CANCEL row
- *       (a valid no-op) and a downstream MIS INITIALIZED are never touched.</li>
+ *       (a valid no-op) and a downstream MIT INITIALIZED are never touched.</li>
  * </ul>
  * Native @Query per the guarded-mutation canon (QueryDSL cannot express these).
  */

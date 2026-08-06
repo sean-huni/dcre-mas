@@ -206,7 +206,7 @@ class MafJobIT {
         assertEquals("SCORE_COMPLETE", run.getExitStatus().getExitCode());
         assertEquals(List.of("VALIDATED", "VALIDATED"),
                 List.of(spineState(arrival, 1), spineState(arrival, 2)),
-                "AMEND/CANCEL are a valid no-op left at VALIDATED for MIS");
+                "AMEND/CANCEL are a valid no-op left at VALIDATED for MIT");
         assertEquals(0, enquiryCount(arrival), "no billed enquiry for a non-CREATE action");
         assertEquals(0, provider.countFor(ACCT_PASS) + provider.countFor(ACCT_DECLINE),
                 "the bureau is never asked for AMEND/CANCEL rows");
