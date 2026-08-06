@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- man_affordability_enquiry: MAF single writer (R-04, R-08). The write-ahead
+    <!-- man_affordability_enquiry: MAS single writer (R-04, R-08). The write-ahead
          enquiry ledger. One intent row per scored instruction record, persisted
          BEFORE the (billed) bureau call so a crash between persist and call leaves
          a durable marker: on resume the READY scan re-picks the SCORE_PENDING spine
@@ -21,10 +21,10 @@
          HOLD_BUREAU_UNAVAILABLE while carried over (R-12). completed_at is NULL
          until the bureau call settles, so an unsettled (crashed or carried) intent
          is distinguishable from a decided one. Score is NULL until decided.
-         MAF reads the mrr-owned spine (mandate_request_entry) and OWNS this table
+         MAS reads the mrr-owned spine (mandate_request_entry) and OWNS this table
          and the spine_state VALIDATED -> SCORE_PENDING -> SCORE_PASSED|SCORE_DECLINED
          transitions (ruling note 2). -->
-    <changeSet id="maf-001-man-affordability-enquiry" author="dcre">
+    <changeSet id="mas-001-man-affordability-enquiry" author="dcre">
         <preConditions onFail="MARK_RAN">
             <not><tableExists tableName="man_affordability_enquiry"/></not>
         </preConditions>
