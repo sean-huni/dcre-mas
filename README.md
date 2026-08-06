@@ -4,7 +4,7 @@ Mandate Affordability / score gate: the third stage of the M10 mandates flow (SC
 
 ## What it does
 
-MAF is the DAG successor of MRV (`MRR -> MRV -> MAF -> MIS -> { MIR || MRW }`). AGT launches it as a short-lived Kubernetes Job with `arrival.id` as the identifying JobParameter (R-16). It runs **after** MRV, so a billed bureau enquiry never fires for an invalid row: only `VALIDATED` (and carried `SCORE_PENDING`) spine rows are ever scored. It is **action-code-scoped**: only `CREATE` rows are scored; `AMEND`/`CANCEL` are a valid no-op, left at `VALIDATED` for MIS (ruling note 2: MRR writes spine ROWS, MRV/MAF/MIS each advance the state columns they own).
+MAF is the DAG successor of MRV (`MRR -> MRV -> MAF -> MIT -> { MIR || MRW }`). AGT launches it as a short-lived Kubernetes Job with `arrival.id` as the identifying JobParameter (R-16). It runs **after** MRV, so a billed bureau enquiry never fires for an invalid row: only `VALIDATED` (and carried `SCORE_PENDING`) spine rows are ever scored. It is **action-code-scoped**: only `CREATE` rows are scored; `AMEND`/`CANCEL` are a valid no-op, left at `VALIDATED` for MIT (ruling note 2: MRR writes spine ROWS, MRV/MAF/MIT each advance the state columns they own).
 
 ### The affordability gate (R-08)
 

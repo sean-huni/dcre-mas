@@ -23,7 +23,7 @@ import java.util.UUID;
  * bureau call, calls the provider with the deterministic idempotency key, then
  * settles. Runs AFTER MRV, so only VALIDATED rows are ever scored (a billed
  * enquiry never fires for an invalid row); AMEND/CANCEL are excluded by the READY
- * scan, a valid no-op left at VALIDATED for MIS.
+ * scan, a valid no-op left at VALIDATED for MIT.
  */
 @Service
 public class ManAffordabilityService {
