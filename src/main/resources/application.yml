@@ -9,21 +9,21 @@ spring:
     password: ${DCRE_DB_PASSWORD:}
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
-    # Shared DB, per-service migration history (same isolation idea as MAF_BATCH_)
-    database-change-log-table: maf_databasechangelog
-    database-change-log-lock-table: maf_databasechangeloglock
+    # Shared DB, per-service migration history (same isolation idea as MAS_BATCH_)
+    database-change-log-table: mas_databasechangelog
+    database-change-log-lock-table: mas_databasechangeloglock
 
 dcre:
   batch:
-    table-prefix: MAF_BATCH_
+    table-prefix: MAS_BATCH_
   agtops-db-url: ${DCRE_AGTOPS_DB_URL:jdbc:postgresql://localhost:26257/agt_ops?sslmode=disable}
   agtops-db-user: ${DCRE_AGTOPS_DB_USER:root}
   agtops-db-password: ${DCRE_AGTOPS_DB_PASSWORD:}
   exchange-root: ${DCRE_EXCHANGE_ROOT:../../../../../infra/dcre-infra/exchange}
-  maf:
+  mas:
     # R-08 affordability gate (A-59 SYNTHETIC): the bureau score provider is the
     # deterministic StubAffordabilityProvider until a real bureau adapter arrives.
-    provider: ${DCRE_MAF_PROVIDER:stub}
+    provider: ${DCRE_MAS_PROVIDER:stub}
     # Per-client score threshold; a CREATE row below its client threshold is
     # SCORE_DECLINED, at/above is SCORE_PASSED. Unmapped clients fall to default.
     threshold:

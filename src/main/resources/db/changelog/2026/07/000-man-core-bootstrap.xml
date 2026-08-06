@@ -20,7 +20,7 @@
          included; only the <svc>-prefixed changeset ids differ. Reviewers diff the copies,
          so an edit to one copy is an edit to all ten. -->
 
-    <changeSet id="maf-000-account-type" author="dcre">
+    <changeSet id="mas-000-account-type" author="dcre">
         <preConditions onFail="MARK_RAN">
             <not><tableExists tableName="account_type"/></not>
         </preConditions>
@@ -33,7 +33,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="maf-000-account-type-seed" author="dcre">
+    <changeSet id="mas-000-account-type-seed" author="dcre">
         <!-- A-62 (FNB account-type roster attestation pending): CHQ/SAV/TRN/CC/RF
              per the spec roster. AG01 semantics: mandates are disallowed on
              Savings only; every other type allows them until attested otherwise. -->
@@ -76,7 +76,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="maf-000-account" author="dcre">
+    <changeSet id="mas-000-account" author="dcre">
         <preConditions onFail="MARK_RAN">
             <not><tableExists tableName="account"/></not>
         </preConditions>
@@ -103,7 +103,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="maf-000-mandate" author="dcre">
+    <changeSet id="mas-000-mandate" author="dcre">
         <!-- Mandate PROJECTION shape (spec section 2); MSR was the sole writer
              (R-10, ruling note 2) and SCRUM-91 deleted it, so the guarded drop at the
              end of this file retires the shape. R-20/F28-F29: at-most-one EFFECTIVELY
@@ -140,7 +140,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet id="maf-000-mandate-reason-code" author="dcre">
+    <changeSet id="mas-000-mandate-reason-code" author="dcre">
         <preConditions onFail="MARK_RAN">
             <not><tableExists tableName="mandate_reason_code"/></not>
         </preConditions>
@@ -154,7 +154,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="maf-000-mandate-reason-code-seed" author="dcre">
+    <changeSet id="mas-000-mandate-reason-code-seed" author="dcre">
         <!-- R-21: reason codes + system actions live as reference DATA, never
              enum ordinals. Vocabulary per the ISO 20022 external status-reason
              set as pinned in plan T3; accepted=false throughout (the nine are
@@ -254,7 +254,7 @@
          of this file. man_ctv_view is rebuilt over mandate_current_status in MRG's 007.
 
          mandate_reason_code is NOT touched: it is reference data, not projection state. -->
-    <changeSet id="maf-000-drop-mandate-projection" author="dcre">
+    <changeSet id="mas-000-drop-mandate-projection" author="dcre">
         <preConditions onFail="MARK_RAN"><tableExists tableName="mandate"/></preConditions>
         <dropTable tableName="mandate"/>
     </changeSet>
