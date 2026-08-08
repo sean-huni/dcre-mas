@@ -30,7 +30,7 @@ Every `spine_state` transition is a GUARDED atomic UPDATE on the entry identity 
 
 ## Architecture
 
-Ephemeral Spring Boot 4.1.0 / Spring Batch 6 / Java 25 batch job cloned from the MRR/MRV skeleton: `ExitCodeMain` wires the Batch outcome into the JVM exit code (R-34), CockroachDB via the PostgreSQL driver, platform-batch persistent JobRepository (`@Import BatchJdbcConfig`, `MAS_BATCH_` prefix), layer-first packages (`config/`, `common/`, `domain/`, `service/`, `data/model/`, `data/repo/`). Runs on the default SERIALIZABLE isolation (only PRG carries READ COMMITTED, SCRUM-90).
+Ephemeral Spring Boot 4.1.0 / Spring Batch 6 / Java 25 batch job cloned from the MRR/MRV skeleton: `ExitCodeMain` wires the Batch outcome into the JVM exit code (R-34), CockroachDB via the PostgreSQL driver, platform-batch persistent JobRepository (`@Import BatchJdbcConfig`, `MAS_BATCH_` prefix), layer-first packages (`config/`, `common/`, `domain/`, `service/`, `data/model/`, `data/repo/`). Runs on the default SERIALIZABLE isolation (only CRG, the collections report generator, carries READ COMMITTED, SCRUM-90).
 
 1. `headerStep` (tasklet): resolves the R-08 per-client threshold token into the job execution context.
 2. `scoreStep` (tasklet): the READY-scan scoring pass, writing each enquiry intent ahead of the bureau call. Carries the shared `CrdbRetryExceptionHandler` (40001 re-runs the tasklet).
@@ -40,11 +40,13 @@ Ephemeral Spring Boot 4.1.0 / Spring Batch 6 / Java 25 batch job cloned from the
 
 ## Database
 
-Liquibase owns the schema in the shared `dcre_man`, per-service history tables (`mas_databasechangelog` / `mas_databasechangeloglock`), calendar layout `2026/07/`, pure-XML typed changesets (MARK_RAN bootstrap guards):
+Liquibase owns the schema in the shared `dcre_man`, per-service history tables (`mas_databasechangelog` / `mas_databasechangeloglock`), calendar layout `2026/07/`, pure-XML typed changesets throughout.
 
-- `000-man-core-bootstrap.xml`: byte-equivalent VERBATIM copy of the shared-core bootstrap (only the changeset ids are `mas-` prefixed, per the shared-core canon) so concurrent first runs of any M-service converge.
-- `001-man-affordability-enquiry.xml`: `man_affordability_enquiry` (`arrival_id`, `sequence`, `intent_key`, `requested_at`, `outcome`, `score`, `completed_at`; UNIQUE `(arrival_id, sequence)` and UNIQUE `intent_key`). MAS is the sole writer (R-04).
-- `002-batch-metadata.xml`: Liquibase-owned Spring Batch 6.0.4 DDL (`batch-metadata-mas.sql`), prefixed `MAS_BATCH_`, EXIT_MESSAGE widened to TEXT for CockroachDB.
+The changelog is the **v1 baseline** (SCRUM-107, owner directive 2026-08-08): every DCRE database is dropped and recreated for the direct cut-over, so it has never run anywhere. It therefore carries no `validCheckSum`, no defensive `IF NOT EXISTS`, and no retrofit changesets; every table is minted in its final shape. The only `MARK_RAN` preconditions left are **convergence** guards, on the three shared-core reference tables that a second writer (the `dcre-infra` seed, or a sibling M-service migrating the same `dcre_man`) can legitimately create first.
+
+- `000-man-core-bootstrap.xml`: byte-equivalent VERBATIM copy of the shared-core bootstrap (only the changeset ids are `mas-` prefixed, per the shared-core canon) so concurrent first runs of any M-service converge. This is where the convergence guards live.
+- `001-man-affordability-enquiry.xml`: `man_affordability_enquiry` (`arrival_id`, `sequence`, `intent_key`, `requested_at`, `outcome`, `score`, `completed_at`; UNIQUE `(arrival_id, sequence)` and UNIQUE `intent_key`). MAS is the sole writer (R-04), so this changeset carries **no** guard: nothing else can create the table.
+- `002-batch-metadata.xml`: Liquibase-owned Spring Batch 6.0.4 DDL as typed XML, one changeset per object, prefixed `MAS_BATCH_`, EXIT_MESSAGE widened to TEXT for CockroachDB. MAS is the only creator of its own `MAS_BATCH_` objects, so these changesets carry no guard either; a kill mid-migration resumes at the object it died on because each commits its own history row (A-81).
 
 MAS reads the MRR-owned spine (`mandate_request_header` / `mandate_request_entry`); it never re-declares the spine in its own changelog (MRV reads it the same way).
 
