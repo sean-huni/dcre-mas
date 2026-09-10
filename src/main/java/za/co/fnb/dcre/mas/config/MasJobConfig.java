@@ -25,8 +25,8 @@ import za.co.fnb.dcre.platform.batch.OutcomeSeamListener;
  * R-08 client threshold token) -> score (READY-scan the VALIDATED + SCORE_PENDING
  * CREATE rows, write each enquiry intent AHEAD of the bureau call, settle) ->
  * rollup (seam verdict SCORE_COMPLETE|SCORE_CARRIED). Identifying JobParameter:
- * arrival.id (R-16). Runs on the default SERIALIZABLE isolation (only PRG carries
- * READ COMMITTED, SCRUM-90).
+ * arrival.id (R-16). Runs on the default SERIALIZABLE isolation (only CRG, the
+ * collections report generator, carries READ COMMITTED, SCRUM-90).
  */
 @Configuration
 @EnableConfigurationProperties(MasThresholdProperties.class)

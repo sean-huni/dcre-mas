@@ -5,6 +5,27 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <!-- ===================================================================================
+         V1 BASELINE (SCRUM-107, owner directive 2026-08-08). Every DCRE database is dropped and
+         recreated for the direct cut-over, so this file has never run anywhere and creates
+         man_affordability_enquiry into an empty dcre_man.
+
+         NO MARK_RAN GUARD HERE, DELIBERATELY, and this is the difference between this file and
+         000-man-core-bootstrap.xml. A MARK_RAN guard is load-bearing only where a SECOND writer
+         can put the object in place before this changelog runs: the dcre-infra bootstrap
+         (scripts/seed-man-core.sql), or a sibling M-service, since all ten migrate the one
+         dcre_man with ten independent history tables and nothing serializes them. Neither
+         applies to man_affordability_enquiry. MAS is its ONLY creator (R-04): the infra seed
+         does not mention it and no other M-service declares it. A guard over a single-creator
+         object on a database that starts empty can never fire, so it is not caution, it is a
+         changeset that silently marks itself applied if the table ever does appear by a route
+         nobody designed. It is removed rather than kept "just in case".
+
+         For the same reason there is no <validCheckSum>ANY</validCheckSum> (no checksum was ever
+         recorded), no defensive IF NOT EXISTS (nothing exists) and no additive retrofit: the
+         table's FINAL shape is the shape the <createTable> below mints, first time.
+         =================================================================================== -->
+
     <!-- man_affordability_enquiry: MAS single writer (R-04, R-08). The write-ahead
          enquiry ledger. One intent row per scored instruction record, persisted
          BEFORE the (billed) bureau call so a crash between persist and call leaves
@@ -25,9 +46,6 @@
          and the spine_state VALIDATED -> SCORE_PENDING -> SCORE_PASSED|SCORE_DECLINED
          transitions (ruling note 2). -->
     <changeSet id="mas-001-man-affordability-enquiry" author="dcre">
-        <preConditions onFail="MARK_RAN">
-            <not><tableExists tableName="man_affordability_enquiry"/></not>
-        </preConditions>
         <createTable tableName="man_affordability_enquiry">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
