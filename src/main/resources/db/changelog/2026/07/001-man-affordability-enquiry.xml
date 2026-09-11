@@ -46,6 +46,10 @@
          and the spine_state VALIDATED -> SCORE_PENDING -> SCORE_PASSED|SCORE_DECLINED
          transitions (ruling note 2). -->
     <changeSet id="mas-001-man-affordability-enquiry" author="dcre">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="man_affordability_enquiry"/></not>
+        </preConditions>
+        
         <createTable tableName="man_affordability_enquiry">
             <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
                 <constraints primaryKey="true" nullable="false"/>
