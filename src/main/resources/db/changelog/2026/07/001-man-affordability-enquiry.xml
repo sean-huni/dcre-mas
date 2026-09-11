@@ -46,6 +46,14 @@
          and the spine_state VALIDATED -> SCORE_PENDING -> SCORE_PASSED|SCORE_DECLINED
          transitions (ruling note 2). -->
     <changeSet id="mas-001-man-affordability-enquiry" author="dcre">
+        <!-- A-82: this changeset gained a re-run guard AFTER it had already been applied,
+             which changes the enclosing checksum without changing one byte of the DDL
+             below. ANY rather than a pinned value: kind-dcre-dev stored 9:548f77c7fd4633448daec7fdc165b85f,
+             and every environment that migrated at a different time holds a different
+             one, so a pin is correct on exactly one database and silently wrong on the
+             rest. The preConditions block is what keeps the re-run safe; the checksum
+             is not load-bearing here. Same call, same reason, as prr 002-batch-metadata. -->
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not><tableExists tableName="man_affordability_enquiry"/></not>
         </preConditions>
