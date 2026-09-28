@@ -61,3 +61,9 @@ MAS reads the MRR-owned spine (`mandate_request_header` / `mandate_request_entry
 
 - `domain/IntentKeyMinterTest`, `common/StubAffordabilityProviderTest`, `config/MasThresholdPropertiesTest`: pure-unit coverage of the deterministic key minting, the digit-derived stub scoring (pinned fixtures), and per-client threshold resolution.
 - `MasJobIT`: the full job over real CockroachDB (Testcontainers) for every R-08 path end to end: PASS/DECLINE threshold verdicts, per-client threshold, AMEND/CANCEL no-op, invalid-row never-billed, R-12 provider-unavailable carry-over, and the R-08 crash-between-intent-persist-and-provider-call resume with the zero-duplicate audit.
+
+## Related repositories
+
+The complete, current list of live DCRE repositories (stage services, orchestrator, platform libraries, infra and tooling) lives in one place: the [DCRE design register README](https://github.com/sean-huni/dcre-design-register#repositories). Deprecated and archived repositories are deliberately absent from it. This README does not copy that list, so it cannot drift.
+
+- Design register: https://github.com/sean-huni/dcre-design-register (start at `docs/specs/DESIGN-REGISTER.md`; the diagrams in `docs/diagrams/` are the specification)
